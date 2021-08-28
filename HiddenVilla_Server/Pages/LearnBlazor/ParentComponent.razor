@@ -1,0 +1,21 @@
+@page "/ParentComponent"
+
+<h1 class="text-danger">Parent Child Component</h1>
+
+<ChildComponent OnClickMethod="ShowMessage" Title="This title is passed as a parameter from Parent Component">
+    <ChildContent>Render Fragment from parent! Woo Hoo!</ChildContent>
+    <SecondChildContent>Over the river and through the woods.</SecondChildContent>
+</ChildComponent>
+<br />
+<br />
+<ChildComponent Title="This is a second child component" />
+
+<p><b>@messageText</b></p>
+
+@code {
+    private string messageText= "";
+    private void ShowMessage(MouseEventArgs e)
+    {
+        messageText = "Blazing text from parent";
+    }
+}
