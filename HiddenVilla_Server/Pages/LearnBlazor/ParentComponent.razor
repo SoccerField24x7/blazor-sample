@@ -6,7 +6,7 @@
     <ChildContent>Render Fragment from parent! Woo Hoo!</ChildContent>
     <SecondChildContent>Over the river and through the woods.</SecondChildContent>
 </ChildComponent>
-<AnotherChildComponent PlaceHolder="Enter the Room Name from Parent" MaxLength="5" />
+<AnotherChildComponent InputAttributes="InputAttributesFromParent" />
 <br />
 <br />
 <ChildComponent Title="This is a second child component" />
@@ -14,6 +14,13 @@
 <p><b>@messageText</b></p>
 
 @code {
+    public Dictionary<string, object> InputAttributesFromParent { get; set; } = new Dictionary<string, object>()
+    {
+        { "required", "required" },
+        { "placeholder", "Enter the Room Name from Parent" },
+        { "maxlength", 5 }
+    };
+
     private string messageText= "";
     private void ShowMessage(MouseEventArgs e)
     {
