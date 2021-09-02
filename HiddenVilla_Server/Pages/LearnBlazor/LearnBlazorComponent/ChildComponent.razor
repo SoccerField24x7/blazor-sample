@@ -18,7 +18,7 @@
         }
     </div>
     <button class="btn btn-danger" @onclick="OnClickMethod">Button to be clicked!</button>
-    <GrandChildComponent MessageForGrandChild="@MessageForGrandChild" />
+    <GrandChildComponent />
 </div>
 
 @code {
@@ -33,7 +33,4 @@
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnClickMethod { get; set; }
-    
-    [Parameter]
-    public string MessageForGrandChild { get; set; }
 }
