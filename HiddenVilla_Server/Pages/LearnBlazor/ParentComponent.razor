@@ -1,11 +1,13 @@
 @page "/ParentComponent"
 
 <h1 class="text-danger">Parent Child Component</h1>
+<CascadingValue Value="@messageForGrandChild">
+    <ChildComponent OnClickMethod="ShowMessage" Title="This title is passed as a parameter from Parent Component">
+        <ChildContent>Render Fragment from parent! Woo Hoo!</ChildContent>
+        <SecondChildContent>Over the river and through the woods.</SecondChildContent>
+    </ChildComponent>
+</CascadingValue>
 
-<ChildComponent OnClickMethod="ShowMessage" Title="This title is passed as a parameter from Parent Component" MessageForGrandChild="This is a message from Grandparent.">
-    <ChildContent>Render Fragment from parent! Woo Hoo!</ChildContent>
-    <SecondChildContent>Over the river and through the woods.</SecondChildContent>
-</ChildComponent>
 <AnotherChildComponent InputAttributes="InputAttributesFromParent" />
 <br />
 <br />
@@ -20,6 +22,8 @@
         { "placeholder", "Enter the Room Name from Parent" },
         { "maxlength", 5 }
     };
+
+    private string messageForGrandChild = "This is a message from Grandparent.";
 
     private string messageText= "";
     private void ShowMessage(MouseEventArgs e)
