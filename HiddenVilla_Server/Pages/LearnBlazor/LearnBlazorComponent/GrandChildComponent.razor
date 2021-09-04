@@ -9,9 +9,9 @@
 </div>
 
 @code {
-    [CascadingParameter]
+    [CascadingParameter(Name = "MessageFromGrandParent")]
     public string MessageForGrandChild { get; set; }
 
-    [CascadingParameter]
-    public int LuckyNumberFromGrandParent { get; set; }
+    [CascadingParameter(Name = "GrandParentsLuckyNumber")]
+    public string LuckyNumberFromGrandParent { get; set; }
 }
