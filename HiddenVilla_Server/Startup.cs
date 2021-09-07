@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace HiddenVilla_Server
 {
@@ -33,6 +34,7 @@ namespace HiddenVilla_Server
                 string conn = Configuration.GetConnectionString("DefaultConnection");
                 options.UseSqlServer(conn);
             });
+            services.AddAutoMapper(typeof(Startup));
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
