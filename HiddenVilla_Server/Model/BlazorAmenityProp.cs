@@ -1,4 +1,4 @@
-namespace HiddenVilla_Server.Models
+namespace HiddenVilla_Server.Model
 {
     public class BlazorAmenityProp
     {
