@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Business.Repository.IRepository;
+using Business.Repository;
 
 namespace HiddenVilla_Server
 {
@@ -34,7 +36,8 @@ namespace HiddenVilla_Server
                 string conn = Configuration.GetConnectionString("DefaultConnection");
                 options.UseSqlServer(conn);
             });
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddScoped<IHotelRoomRepository, HotelRoomRepository>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
