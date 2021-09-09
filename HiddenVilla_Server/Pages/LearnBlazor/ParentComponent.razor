@@ -3,7 +3,11 @@
 <h1 class="text-danger">Parent Child Component</h1>
 <CascadingValue Value="@messageForGrandChild" Name="MessageFromGrandParent">
     <CascadingValue Value="@LuckyNumber" Name="GrandParentsLuckyNumber">
-        <ChildComponent OnClickMethod="ShowMessage" Title="This title is passed as a parameter from Parent Component">
+        <ChildComponent
+            @ref="childComp"
+            OnClickMethod="ShowMessage"
+            Title="This title is passed as a parameter from Parent Component"
+        >
             <ChildContent>Render Fragment from parent! Woo Hoo!</ChildContent>
             <SecondChildContent>Over the river and through the woods.</SecondChildContent>
         </ChildComponent>
@@ -16,6 +20,10 @@
 <ChildComponent Title="This is a second child component" />
 
 <p><b>@messageText</b></p>
+
+<div class="row">
+    <button class="btn btn-success" @onclick="() => childComp.ShowToastrSuccess()">Show Alert</button>
+</div>
 
 @code {
     public Dictionary<string, object> InputAttributesFromParent { get; set; } = new Dictionary<string, object>()
@@ -33,4 +41,6 @@
     {
         messageText = "Blazing text from parent";
     }
+
+    private ChildComponent childComp;
 }
