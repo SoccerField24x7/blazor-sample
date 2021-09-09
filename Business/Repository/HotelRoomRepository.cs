@@ -81,13 +81,25 @@ namespace Business.Repository
             return hotelRoomDTO;
         }
 
-        public async Task<HotelRoomDTO> IsRoomUnique(string name)
+        public async Task<HotelRoomDTO> IsRoomUnique(string name, int roomId)
         {
             HotelRoomDTO hotelRoomDTO = null;
 
             try
             {
-                hotelRoomDTO = _mapper.Map<HotelRoom, HotelRoomDTO>(await _context.Set<HotelRoom>().FirstOrDefaultAsync(x => x.Name.ToLower() == name.Trim().ToLower()));
+                if (roomId == 0)
+                {
+                    hotelRoomDTO = _mapper.Map<HotelRoom, HotelRoomDTO>(await _context.Set<HotelRoom>().FirstOrDefaultAsync(x => x.Name.ToLower() == name.Trim().ToLower()));
+                }
+                else
+                {
+                    hotelRoomDTO = _mapper.Map<HotelRoom, HotelRoomDTO>(
+                        await _context.Set<HotelRoom>()
+                            .FirstOrDefaultAsync(x => x.Name.ToLower() == name.Trim().ToLower()
+                            && x.Id == roomId
+                    ));
+                }
+                
             }
             catch(Exception ex)
             {
