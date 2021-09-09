@@ -1,0 +1,53 @@
+@page "/blazorjs"
+@inject IJSRuntime JsRuntime
+
+<h3>blazorjs</h3>
+
+<div class="row">
+    <button class="btn btn-secondary" @onclick="(() => TestConfirmBox(ConfirmMessage))">Test Confirm Button</button>
+</div>
+<div class="row mt-4">
+    <button class="btn btn-success" @onclick="TestSuccess">Test Toastr Success</button>
+    <button class="btn btn-danger" @onclick="TestFailure">Test Toastr Failure</button>
+</div>
+<div class="row mt-4">
+    <button class="btn btn-success" @onclick="TestAlertSuccess">Test Alert Success</button>
+    <button class="btn btn-danger" @onclick="TestAlertFailure">Test Alert Failure</button>
+</div>
+<div class="row">
+    @if(ConfirmResult)
+    {
+        <p>Confirmation has been made!</p>
+    }
+    else
+    {
+        <p>Confirmation Pending...</p>
+    }
+</div>
+
+@code {
+    private string ConfirmMessage { get; set; }
+    private bool ConfirmResult { get; set; }
+
+    private async Task TestConfirmBox(string message)
+    {
+        ConfirmResult = await JsRuntime.InvokeAsync<bool>("confirm", message);
+    }
+
+    private async Task TestSuccess()
+    {
+        await JsRuntime.ToastrSuccess("Success Message");
+    }
+    private async Task TestFailure()
+    {
+        await JsRuntime.ToastrError("Error Message");
+    }
+    private async Task TestAlertSuccess()
+    {
+        await JsRuntime.ShowSuccessModal("TitleBar", "Success Message");
+    }
+    private async Task TestAlertFailure()
+    {
+        await JsRuntime.ShowErrorModal("Error!", "Error Message");
+    }
+}
