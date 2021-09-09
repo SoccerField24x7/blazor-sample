@@ -22,6 +22,9 @@
 </div>
 
 @code {
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; }
+
     [Parameter]
     public string Title { get; set; }
 
@@ -33,4 +36,9 @@
 
     [Parameter]
     public EventCallback<MouseEventArgs> OnClickMethod { get; set; }
+
+    public async Task ShowToastrSuccess()
+    {
+        await JSRuntime.ToastrSuccess("Woo! Success is on the way!");
+    }
 }
