@@ -2,6 +2,7 @@
 @page "/hotel-room/edit/{Id:int}"
 @using Models
 @using Business.Repository.IRepository
+@using HiddenVilla_Server.Service.IService;
 @inject IHotelRoomRepository HotelRoomRepository
 @inject NavigationManager NavigationManager
 
@@ -37,6 +38,9 @@
                         <InputTextArea @bind-Value="HotelRoomModel.Details" class="form-control" />
                     </div>
                     <div class="form-group">
+                        <InputFile OnChange="HandleImageUpload" multiple />
+                    </div>
+                    <div class="form-group">
                         <button class="btn btn-primary">@Title Room</button>
                         <NavLink href="hotel-room" class="btn btn-secondary">Back</NavLink>
                     </div>
@@ -51,6 +55,9 @@
     public int? Id { get; set; }
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
+
+    [Inject]
+    public IFileUpload FileUpload { get; set; }
 
     private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
     private string Title { get; set; } = "Create";
@@ -68,6 +75,52 @@
         {
             //create
             HotelRoomModel = new HotelRoomDTO();
+        }
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        try
+        {
+             var images = new List<string>();
+            if (e.GetMultipleFiles().Count > 0)
+            {
+                foreach (var file in e.GetMultipleFiles())
+                {
+                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(file.Name);
+                    if (fileInfo.Extension.ToLower() == ".jpg" ||
+                        fileInfo.Extension.ToLower() == ".png" ||
+                        fileInfo.Extension.ToLower() == ".jpeg")
+                    {
+                        var uploadImagePath = await FileUpload.UploadFile(file);
+                        images.Add(uploadImagePath);
+                    }
+                    else
+                    {
+                        await JSRuntime.ToastrError("Please select .jpg/.jpeg/.png files onlye");
+                        return;
+                    }
+                }
+
+                if (images.Any())
+                {
+                    if (HotelRoomModel.ImgageUrls == null)
+                    {
+                        HotelRoomModel.ImgageUrls = new();
+                    }
+
+                    HotelRoomModel.ImgageUrls.AddRange(images);
+                }
+                else
+                {
+                    await JSRuntime.ToastrError("Image uploading failed.");
+                    return;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.ToastrError(ex.Message);
         }
     }
     
