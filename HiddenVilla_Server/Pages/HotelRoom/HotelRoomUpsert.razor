@@ -3,6 +3,7 @@
 @using Models
 @using Business.Repository.IRepository
 @using HiddenVilla_Server.Service.IService;
+@using System.IO
 @inject IHotelRoomRepository HotelRoomRepository
 @inject NavigationManager NavigationManager
 
@@ -39,6 +40,20 @@
                     </div>
                     <div class="form-group">
                         <InputFile OnChange="HandleImageUpload" multiple />
+                        <div class="row">
+                        @if(HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Count > 0)
+                        {
+                            foreach (var roomImage in HotelRoomModel.ImageUrls)
+                            {
+                                <div class="col-md-2 mt-3">
+                                    <div style="background: url('@roomImage') 50% 50%; "></div>
+                                </div>
+                                <button type="button" class="btn btn-outline-danger btn-block mt-4">
+                                    Delete
+                                </button>
+                            }
+                        }
+                        </div>
                     </div>
                     <div class="form-group">
                         <button class="btn btn-primary">@Title Room</button>
@@ -87,7 +102,7 @@
             {
                 foreach (var file in e.GetMultipleFiles())
                 {
-                    System.IO.FileInfo fileInfo = new System.IO.FileInfo(file.Name);
+                    FileInfo fileInfo = new(file.Name);
                     if (fileInfo.Extension.ToLower() == ".jpg" ||
                         fileInfo.Extension.ToLower() == ".png" ||
                         fileInfo.Extension.ToLower() == ".jpeg")
@@ -97,19 +112,19 @@
                     }
                     else
                     {
-                        await JSRuntime.ToastrError("Please select .jpg/.jpeg/.png files onlye");
+                        await JSRuntime.ToastrError("Please select .jpg/.jpeg/.png files only");
                         return;
                     }
                 }
 
                 if (images.Any())
                 {
-                    if (HotelRoomModel.ImgageUrls == null)
+                    if (HotelRoomModel.ImageUrls == null)
                     {
-                        HotelRoomModel.ImgageUrls = new();
+                        HotelRoomModel.ImageUrls = new();
                     }
 
-                    HotelRoomModel.ImgageUrls.AddRange(images);
+                    HotelRoomModel.ImageUrls.AddRange(images);
                 }
                 else
                 {
