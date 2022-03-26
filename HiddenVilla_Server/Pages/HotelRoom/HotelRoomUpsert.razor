@@ -4,7 +4,6 @@
 @using Business.Repository.IRepository
 @using HiddenVilla_Server.Service.IService;
 @using System.IO
-@inject IHotelRoomRepository HotelRoomRepository
 @inject NavigationManager NavigationManager
 
 <div class="row mt-2 mb-5">
@@ -41,18 +40,22 @@
                     <div class="form-group">
                         <InputFile OnChange="HandleImageUpload" multiple />
                         <div class="row">
-                        @if(HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Count > 0)
-                        {
-                            foreach (var roomImage in HotelRoomModel.ImageUrls)
+                            @if(HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Count > 0)
                             {
-                                <div class="col-md-2 mt-3">
-                                    <div style="background: url('@roomImage') 50% 50%; "></div>
-                                </div>
-                                <button type="button" class="btn btn-outline-danger btn-block mt-4">
-                                    Delete
-                                </button>
+                                int serial = 1;
+                                foreach (var roomImage in HotelRoomModel.ImageUrls)
+                                {
+                                    <div class="col-md-2 mt-3">
+                                        <div class="room-image" style="background: url('@roomImage') 50% 50%; ">
+                                            <span class="room-image-title">@serial</span>"
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger btn-block mt-4">
+                                            Delete
+                                        </button>
+                                    </div>
+                                    serial++;
+                                }
                             }
-                        }
                         </div>
                     </div>
                     <div class="form-group">
@@ -68,14 +71,22 @@
 @code {
     [Parameter]
     public int? Id { get; set; }
+
     [Inject]
     public IJSRuntime JSRuntime { get; set; }
 
     [Inject]
     public IFileUpload FileUpload { get; set; }
 
-    private HotelRoomDTO HotelRoomModel { get; set; } = new HotelRoomDTO();
+    [Inject]
+    public  IHotelRoomRepository HotelRoomRepository { get; set; }
+
+    [Inject]
+    public IHotelImagesRepository HotelImagesRepository { get; set; }
+
+    private HotelRoomDTO HotelRoomModel { get; set; } = new();
     private string Title { get; set; } = "Create";
+    public HotelRoomImageDTO RoomImage { get; set; } = new();
 
 
     protected async override Task OnInitializedAsync()
@@ -85,6 +96,10 @@
             //updating
             Title = "Update";
             HotelRoomModel = await HotelRoomRepository.GetHotelRoom(Id.Value);
+            if (HotelRoomModel?.HotelRoomImages != null)
+            {
+                HotelRoomModel.ImageUrls = HotelRoomModel.HotelRoomImages.Select(x => x.RoomImageUrl).ToList();
+            }
         }
         else
         {
@@ -97,7 +112,7 @@
     {
         try
         {
-             var images = new List<string>();
+            var images = new List<string>();
             if (e.GetMultipleFiles().Count > 0)
             {
                 foreach (var file in e.GetMultipleFiles())
@@ -138,7 +153,7 @@
             await JSRuntime.ToastrError(ex.Message);
         }
     }
-    
+
     private async Task HandleHotelUpsert()
     {
         try
@@ -160,6 +175,7 @@
             {
                 //create
                 var createdResult = await HotelRoomRepository.CreateHotelRoom(HotelRoomModel);
+                await AddHotelRoomImage(createdResult);
                 await JSRuntime.ToastrSuccess("Hotel room added successfully.");
             }
         }
@@ -169,5 +185,19 @@
         }
 
         NavigationManager.NavigateTo("hotel-room");
+    }
+
+    private async Task AddHotelRoomImage(HotelRoomDTO roomDetails)
+    {
+        foreach(var imageUrl in HotelRoomModel.ImageUrls)
+        {
+            RoomImage = new()
+                {
+                    RoomId = roomDetails.Id,
+                    RoomImageUrl = imageUrl
+                };
+
+                await HotelImagesRepository.CreateHotelRoomImage(RoomImage);
+        }
     }
 }
