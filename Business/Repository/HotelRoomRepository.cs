@@ -96,7 +96,7 @@ namespace Business.Repository
                     hotelRoomDTO = _mapper.Map<HotelRoom, HotelRoomDTO>(
                         await _context.Set<HotelRoom>()
                             .FirstOrDefaultAsync(x => x.Name.ToLower() == name.Trim().ToLower()
-                            && x.Id == roomId
+                            && x.Id != roomId
                     ));
                 }
                 

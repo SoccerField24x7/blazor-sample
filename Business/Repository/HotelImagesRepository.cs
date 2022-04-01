@@ -44,6 +44,21 @@ namespace Business.Repository
             return await _context.SaveChangesAsync();
         }
 
+        public async Task<int> DeleteHotelImageByImageUrl(string imageUrl)
+        {
+            var allImages =
+                await _context.HotelRoomImages.FirstOrDefaultAsync(x => x.RoomImageUrl.ToLower() == imageUrl.ToLower());
+
+            if (allImages == null)
+            {
+                return 0;
+            }
+
+            _context.HotelRoomImages.Remove(allImages);
+
+            return await _context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<HotelRoomImageDTO>> GetHotelRoomImages(int roomId)
         {
             return _mapper.Map<IEnumerable<HotelRoomImage>, IEnumerable<HotelRoomImageDTO>>(
