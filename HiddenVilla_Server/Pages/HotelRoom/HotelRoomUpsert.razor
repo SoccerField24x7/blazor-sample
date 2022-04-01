@@ -49,7 +49,7 @@
                                         <div class="room-image" style="background: url('@roomImage') 50% 50%; ">
                                             <span class="room-image-title">@serial</span>"
                                         </div>
-                                        <button type="button" class="btn btn-outline-danger btn-block mt-4">
+                                        <button type="button" @onclick="() => DeletePhoto(roomImage)" class="btn btn-outline-danger btn-block mt-4">
                                             Delete
                                         </button>
                                     </div>
@@ -205,6 +205,26 @@
 
                 await HotelImagesRepository.CreateHotelRoomImage(RoomImage);
             }
+        }
+    }
+
+    internal async Task DeletePhoto(string imageUrl)
+    {
+        try
+        {
+            int imageIndex = HotelRoomModel.ImageUrls.FindIndex(x => x == imageUrl);
+            string imageName = imageUrl.Replace($"RoomImages/", "");
+
+            if(HotelRoomModel.Id == 0 && Title == "Create")
+            {
+                var result = FileUpload.DeleteFile(imageName);
+            }
+
+            HotelRoomModel.ImageUrls.RemoveAt(imageIndex);
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.ToastrError(ex.Message);
         }
     }
 }
