@@ -40,7 +40,13 @@
                     <div class="form-group">
                         <InputFile OnChange="HandleImageUpload" multiple />
                         <div class="row">
-                            @if(HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Count > 0)
+                            @if (IsImageUploading)
+                            {
+                                <div class="col-md-12">
+                                    <span><i class="fa fa-spin fa-spinner"></i>Please wait... images uploading</span>
+                                </div>
+                            }
+                            @if (HotelRoomModel.ImageUrls is not null && HotelRoomModel.ImageUrls.Count > 0)
                             {
                                 int serial = 1;
                                 foreach (var roomImage in HotelRoomModel.ImageUrls)
@@ -88,6 +94,7 @@
     private string Title { get; set; } = "Create";
     public HotelRoomImageDTO RoomImage { get; set; } = new();
     private List<string> DeletedImageNames { get; set; } = new();
+    private bool IsImageUploading { get; set; } = false;
 
 
     protected async override Task OnInitializedAsync()
@@ -111,6 +118,8 @@
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e)
     {
+        IsImageUploading = true;
+        
         try
         {
             var images = new List<string>();
@@ -153,6 +162,8 @@
         {
             await JSRuntime.ToastrError(ex.Message);
         }
+
+        IsImageUploading = false;
     }
 
     private async Task HandleHotelUpsert()
