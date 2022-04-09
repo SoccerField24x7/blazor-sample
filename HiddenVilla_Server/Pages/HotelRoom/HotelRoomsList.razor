@@ -53,12 +53,21 @@
     </div>
 </div>
 
+<DeleteConfirmation></DeleteConfirmation>
+
 @code {
+    [Inject] IJSRuntime JSRuntime { get; set; }
+
     private IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
 
     protected override async Task OnInitializedAsync()
     {
-            HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
+        HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
 
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await JSRuntime.InvokeVoidAsync("ShowDeleteConfirmationModal");
     }
 }
