@@ -38,6 +38,7 @@
                             <td>@room.SqFt</td>
                             <td>
                                 <NavLink href="@($"hotel-room/edit/{room.Id}")" class="btn btn-primary">Edit</NavLink>
+                                <button class="btn btn-danger" @onclick="() => HandleDelete(room.Id)">Delete</button>
                             </td>
                         </tr>
                     }
@@ -59,15 +60,28 @@
     [Inject] IJSRuntime JSRuntime { get; set; }
 
     private IEnumerable<HotelRoomDTO> HotelRooms { get; set; } = new List<HotelRoomDTO>();
+    private int? DeleteRoomId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
-
     }
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    private async Task HandleDelete(int roomId)
     {
+        DeleteRoomId = roomId;
         await JSRuntime.InvokeVoidAsync("ShowDeleteConfirmationModal");
+    }
+
+    public async Task ConfirmDelete_Click(bool isConfirmed)
+    {
+        if (isConfirmed && DeleteRoomId != null)
+        {
+            await HotelRoomRepository.DeleteHotelRoom(DeleteRoomId.Value);
+            await JSRuntime.ToastrSuccess("Hotel Room Deleted Successfully.");
+            HotelRooms = await HotelRoomRepository.GetAllHotelRooms();
+        }
+
+        await JSRuntime.InvokeVoidAsync("HideDeleteConfirmationModal");
     }
 }
