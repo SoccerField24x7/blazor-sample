@@ -7,6 +7,7 @@ using AutoMapper;
 using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using System.IO;
 
 namespace Business.Repository
 {
@@ -41,7 +42,18 @@ namespace Business.Repository
             var roomDetails = await _context.Set<HotelRoom>().FindAsync(roomId);
             if (roomDetails != null)
             {
+                var allImages = await _context.Set<HotelRoomImage>().Where(x => x.RoomId == roomId).ToListAsync();
+                foreach(var image in allImages)
+                {
+                    if(File.Exists(image.RoomImageUrl))
+                    {
+                        File.Delete(image.RoomImageUrl);
+                    }
+                }
+
+                _context.RemoveRange(allImages);
                 _context.HotelRooms.Remove(roomDetails);
+                
                 return await _context.SaveChangesAsync();
             }
 
